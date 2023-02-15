@@ -729,7 +729,7 @@ let unknown = getProperty(taxi, 'unknown');
 
 ### 索引类型和字符串索引签名
 
-`keyof`和`T[K]`与字符串索引签名进行交互。索引签名的参数类型必须为`number`或`string`。 如果你有一个带有字符串索引签名的类型，那么`keyof T`会是`string | number`。 \(并非只有`string`，因为在JavaScript里，你可以使用字符串`object['42'`或 数字`object[42]`索引来访问对象属性\)。 并且`T[string]`为索引签名的类型：
+`keyof`和`T[K]`与字符串索引签名进行交互。索引签名的参数类型必须为`number`或`string`。 如果你有一个带有字符串索引签名的类型，那么`keyof T`会是`string | number`。 \(并非只有`string`，因为在JavaScript里，你可以使用字符串`object['42']`或 数字`object[42]`索引来访问对象属性\)。 并且`T[string]`为索引签名的类型：
 
 ```typescript
 interface Dictionary<T> {
@@ -1040,7 +1040,9 @@ type T43 = NonFunctionProperties<Part>;  // { id: number, name: string, subparts
 **例子**
 
 ```typescript
-type ElementType<T> = T extends any[] ? ElementType<T[number]> : T;  // Error
+// 在 TypeScript 4.1 之前的版本会报错。
+// TypeScript 4.1 改进了对递归的有条件类型的支持，详情参考 4.1 版本发布说明
+type ElementType<T> = T extends any[] ? ElementType<T[number]> : T;
 ```
 
 #### 有条件类型中的类型推断
