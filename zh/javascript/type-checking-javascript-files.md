@@ -2,7 +2,7 @@
 
 TypeScript 2.3以后的版本支持使用`--checkJs`对`.js`文件进行类型检查和错误提示。
 
-你可以通过添加`// @ts-nocheck`注释来忽略类型检查；相反，你可以通过去掉`--checkJs`设置并添加一个`// @ts-check`注释来选则检查某些`.js`文件。 你还可以使用`// @ts-ignore`来忽略本行的错误。 如果你使用了`tsconfig.json`，JS检查将遵照一些严格检查标记，如`noImplicitAny`，`strictNullChecks`等。 但因为JS检查是相对宽松的，在使用严格标记时可能会有些出乎意料的情况。
+你可以通过添加`// @ts-nocheck`注释来忽略类型检查；相反，你可以通过去掉`--checkJs`设置并添加一个`// @ts-check`注释来选择检查某些`.js`文件。 你还可以使用`// @ts-ignore`来忽略本行的错误。 如果你使用了`tsconfig.json`，JS检查将遵照一些严格检查标记，如`noImplicitAny`，`strictNullChecks`等。 但因为JS检查是相对宽松的，在使用严格标记时可能会有些出乎意料的情况。
 
 对比`.js`文件和`.ts`文件在类型检查上的差异，有如下几点需要注意：
 
@@ -785,4 +785,3 @@ var normal;
 ```
 
 不同于JSDoc类型系统，TypeScript只允许将类型标记为包不包含`null`。 没有明确的`Non-nullable` -- 如果启用了`strictNullChecks`，那么`number`是非`null`的。 如果没有启用，那么`number`是可以为`null`的。
-

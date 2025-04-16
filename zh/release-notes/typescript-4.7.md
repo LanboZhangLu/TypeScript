@@ -13,9 +13,9 @@ TypeScript 4.7 正式地支持了该功能，它添加了两个新的 `module` �
 
 ```json
 {
-    "compilerOptions": {
-        "module": "node16",
-    }
+  "compilerOptions": {
+    "module": "node16"
+  }
 }
 ```
 
@@ -28,12 +28,11 @@ Node.js 在 [package.json 中支持了一个新的设置](https://nodejs.org/api
 
 ```json
 {
-    "name": "my-package",
-    "type": "module",
+  "name": "my-package",
+  "type": "module",
 
-    "//": "...",
-    "dependencies": {
-    }
+  "//": "...",
+  "dependencies": {}
 }
 ```
 
@@ -41,12 +40,12 @@ Node.js 在 [package.json 中支持了一个新的设置](https://nodejs.org/api
 若没有设置，则默认值为 CommonJS。
 当一个文件被当做 ESM 模块进行解析时，会使用如下与 CommonJS 模块不同的规则：
 
-* 允许使用 `import` / `export` 语句
-* 允许使用顶层的 `await`
-* 相对路径导入必须提供完整的扩展名（需要使用 `import "./foo.js"` 而非 `import "./foo"`）
-* 解析 `node_modules` 里的依赖可能不同
-* 不允许直接使用像 `require` 和 `module` 这样的全局值
-* 需要使用特殊的规则来导入 CommonJS 模块
+- 允许使用 `import` / `export` 语句
+- 允许使用顶层的 `await`
+- 相对路径导入必须提供完整的扩展名（需要使用 `import "./foo.js"` 而非 `import "./foo"`）
+- 解析 `node_modules` 里的依赖可能不同
+- 不允许直接使用像 `require` 和 `module` 这样的全局值
+- 需要使用特殊的规则来导入 CommonJS 模块
 
 我们回头会介绍其中一部分。
 
@@ -54,8 +53,8 @@ Node.js 在 [package.json 中支持了一个新的设置](https://nodejs.org/api
 当 TypeScript 遇到 `.ts`，`.tsx`，`.js` 或 `.jsx` 文件时，
 它会向上查找 `package.json` 来确定该文件是否使用了 ESM，然后再以此决定：
 
-* 如何查找该文件所导入的其它模块
-* 当需要产生输出的时，如何转换该文件
+- 如何查找该文件所导入的其它模块
+- 当需要产生输出的时，如何转换该文件
 
 当一个 `.ts` 文件被编译为 ESM 时，ECMAScript `import` / `export` 语句在生成的 `.js` 文件中原样输出；
 当一个 `.ts` 文件被编译为 CommonJS 模块时，则会产生与使用了 `--module commonjs` 选项一致的输出结果。
@@ -66,11 +65,11 @@ Node.js 在 [package.json 中支持了一个新的设置](https://nodejs.org/api
 ```ts
 // ./foo.ts
 export function helper() {
-    // ...
+  // ...
 }
 
 // ./bar.ts
-import { helper } from "./foo"; // only works in CJS
+import { helper } from './foo'; // only works in CJS
 
 helper();
 ```
@@ -80,7 +79,7 @@ helper();
 
 ```ts
 // ./bar.ts
-import { helper } from "./foo.js"; // works in ESM & CJS
+import { helper } from './foo.js'; // works in ESM & CJS
 
 helper();
 ```
@@ -114,11 +113,11 @@ Node.js 允许 ESM 导入 CommonJS 模块，就如同它们是带有默认导出
 ```ts
 // ./foo.cts
 export function helper() {
-    console.log("hello world!");
+  console.log('hello world!');
 }
 
 // ./bar.mts
-import foo from "./foo.cjs";
+import foo from './foo.cjs';
 
 // prints "hello world!"
 foo.helper();
@@ -131,11 +130,11 @@ foo.helper();
 ```ts
 // ./foo.cts
 export function helper() {
-    console.log("hello world!");
+  console.log('hello world!');
 }
 
 // ./bar.mts
-import { helper } from "./foo.cjs";
+import { helper } from './foo.cjs';
 
 // prints "hello world!"
 helper();
@@ -146,7 +145,7 @@ helper();
 关于互操作性，TypeScript 特有的注意点是如下的语法：
 
 ```ts
-import foo = require("foo");
+import foo = require('foo');
 ```
 
 在 CommonJS 模块中，它可以归结为 `require()` 调用，
@@ -157,13 +156,13 @@ import foo = require("foo");
 ```ts
 // ./foo.cts
 export function helper() {
-    console.log("hello world!");
+  console.log('hello world!');
 }
 
 // ./bar.mts
-import foo = require("./foo.cjs");
+import foo = require('./foo.cjs');
 
-foo.helper()
+foo.helper();
 ```
 
 最后值得注意的是在 CommonJS 模块里导入 ESM 的唯一方法是使用动态 `import()` 调用。
@@ -181,20 +180,20 @@ Node.js 在 `package.json` 支持了一个新的字段 [`exports`](https://nodej
 ```json
 // package.json
 {
-    "name": "my-package",
-    "type": "module",
-    "exports": {
-        ".": {
-            // Entry-point for `import "my-package"` in ESM
-            "import": "./esm/index.js",
+  "name": "my-package",
+  "type": "module",
+  "exports": {
+    ".": {
+      // Entry-point for `import "my-package"` in ESM
+      "import": "./esm/index.js",
 
-            // Entry-point for `require("my-package") in CJS
-            "require": "./commonjs/index.cjs",
-        },
-    },
+      // Entry-point for `require("my-package") in CJS
+      "require": "./commonjs/index.cjs"
+    }
+  },
 
-    // CJS fall-back for older versions of Node.js
-    "main": "./commonjs/index.cjs",
+  // CJS fall-back for older versions of Node.js
+  "main": "./commonjs/index.cjs"
 }
 ```
 
@@ -216,34 +215,34 @@ TypeScript 会查找名为 `./lib/index.d.ts` 的文件。
 ```json
 // package.json
 {
-    "name": "my-package",
-    "type": "module",
-    "exports": {
-        ".": {
-            // Entry-point for `import "my-package"` in ESM
-            "import": {
-                // Where TypeScript will look.
-                "types": "./types/esm/index.d.ts",
+  "name": "my-package",
+  "type": "module",
+  "exports": {
+    ".": {
+      // Entry-point for `import "my-package"` in ESM
+      "import": {
+        // Where TypeScript will look.
+        "types": "./types/esm/index.d.ts",
 
-                // Where Node.js will look.
-                "default": "./esm/index.js"
-            },
-            // Entry-point for `require("my-package") in CJS
-            "require": {
-                // Where TypeScript will look.
-                "types": "./types/commonjs/index.d.cts",
+        // Where Node.js will look.
+        "default": "./esm/index.js"
+      },
+      // Entry-point for `require("my-package") in CJS
+      "require": {
+        // Where TypeScript will look.
+        "types": "./types/commonjs/index.d.cts",
 
-                // Where Node.js will look.
-                "default": "./commonjs/index.cjs"
-            },
-        }
-    },
+        // Where Node.js will look.
+        "default": "./commonjs/index.cjs"
+      }
+    }
+  },
 
-    // Fall-back for older versions of TypeScript
-    "types": "./types/index.d.ts",
+  // Fall-back for older versions of TypeScript
+  "types": "./types/index.d.ts",
 
-    // CJS fall-back for older versions of Node.js
-    "main": "./commonjs/index.cjs"
+  // CJS fall-back for older versions of Node.js
+  "main": "./commonjs/index.cjs"
 }
 ```
 
@@ -272,15 +271,16 @@ TypeScript 的规则则是如果一个文件里存在 `import` 或 `export` 语�
 1. `"legacy"`，行为与 TypeScript 4.6 和以前的版本相同
 1. `"force"`
 
-在 `"auto"` 模式下，TypeScript 不会检测 `import` 和 `export` 语句，但它仍会检测：
+在 `"auto"` 模式下，TypeScript 不但会检测 `import` 和 `export` 语句，它还会检测：
 
-* 若启用了 `--module nodenext` / `--module node16`，那么 `package.json` 里的 `"type"` 字段是否为 `"module"`，以及
-* 若启用了 `--jsx react-jsx`，那么当前文件是否为 JSX 文件。
+- 若启用了 `--module nodenext` / `--module node16`，那么 `package.json` 里的 `"type"` 字段是否为 `"module"`，以及
+- 若启用了 `--jsx react-jsx`，那么当前文件是否为 JSX 文件。
 
-在这些情况下，我们想将每个文件都当作模块。
+在这些情况下，我们想将每个文件都当作模块文件。
+
 `"force"` 选项能够保证每个非声明文件都被当成模块文件，不论 `module`，`moduleResoluton` 和 `jsx` 是如何设置的。
 
-与此同时，使用 `"legacy"` 选项会回退到以前的行为，仅通过查找 `import` 和 `export` 语句来决定是否为模块。
+与此同时，使用 `"legacy"` 选项会回退到以前的行为，仅通过检测 `import` 和 `export` 语句来决定是否为模块文件。
 
 更多详情请阅读[PR](https://github.com/microsoft/TypeScript/pull/47495)。
 
@@ -292,14 +292,14 @@ TypeScript 的规则则是如果一个文件里存在 `import` 或 `export` 语�
 ```ts
 const key = Symbol();
 
-const numberOrString = Math.random() < 0.5 ? 42 : "hello";
+const numberOrString = Math.random() < 0.5 ? 42 : 'hello';
 
 const obj = {
-    [key]: numberOrString,
+  [key]: numberOrString,
 };
 
-if (typeof obj[key] === "string") {
-    let str = obj[key].toUpperCase();
+if (typeof obj[key] === 'string') {
+  let str = obj[key].toUpperCase();
 }
 ```
 
@@ -315,15 +315,15 @@ TypeScript 4.7 能够知道 `obj[key]` 的类型为 `string`。
 const key = Symbol();
 
 class C {
-    [key]: string;
+  [key]: string;
 
-    constructor(str: string) {
-        // oops, forgot to set 'this[key]'
-    }
+  constructor(str: string) {
+    // oops, forgot to set 'this[key]'
+  }
 
-    screamString() {
-        return this[key].toUpperCase();
-    }
+  screamString() {
+    return this[key].toUpperCase();
+  }
 }
 ```
 
@@ -338,38 +338,42 @@ TypeScript 4.7 可以对数组和对象里的函数进行更精细的类型推�
 
 ```ts
 declare function f<T>(arg: {
-    produce: (n: string) => T,
-    consume: (x: T) => void }
-): void;
+  produce: (n: string) => T;
+  consume: (x: T) => void;
+}): void;
 
 // Works
 f({
-    produce: () => "hello",
-    consume: x => x.toLowerCase()
+  produce: () => 'hello',
+  consume: x => x.toLowerCase(),
 });
 
 // Works
 f({
-    produce: (n: string) => n,
-    consume: x => x.toLowerCase(),
+  produce: (n: string) => n,
+  consume: x => x.toLowerCase(),
 });
 
 // Was an error, now works.
 f({
-    produce: n => n,
-    consume: x => x.toLowerCase(),
+  produce: n => n,
+  consume: x => x.toLowerCase(),
 });
 
 // Was an error, now works.
 f({
-    produce: function () { return "hello"; },
-    consume: x => x.toLowerCase(),
+  produce: function () {
+    return 'hello';
+  },
+  consume: x => x.toLowerCase(),
 });
 
 // Was an error, now works.
 f({
-    produce() { return "hello" },
-    consume: x => x.toLowerCase(),
+  produce() {
+    return 'hello';
+  },
+  consume: x => x.toLowerCase(),
 });
 ```
 
@@ -386,11 +390,11 @@ TypeScript 现在会收集与泛型参数 `T` 的类型推断相关的函数，�
 
 ```ts
 interface Box<T> {
-    value: T;
+  value: T;
 }
 
 function makeBox<T>(value: T) {
-    return { value };
+  return { value };
 }
 ```
 
@@ -399,7 +403,7 @@ function makeBox<T>(value: T) {
 
 ```ts
 function makeHammerBox(hammer: Hammer) {
-    return makeBox(hammer);
+  return makeBox(hammer);
 }
 
 // 或者
@@ -450,19 +454,20 @@ const errorMap = new ErrorMap();
 例如，编写一个有条件类型，它返回元组类型的第一个元素如果它类似 `string` 类型的话。
 
 ```ts
-type FirstIfString<T> =
-    T extends [infer S, ...unknown[]]
-        ? S extends string ? S : never
-        : never;
+type FirstIfString<T> = T extends [infer S, ...unknown[]]
+  ? S extends string
+    ? S
+    : never
+  : never;
 
- // string
+// string
 type A = FirstIfString<[string, number, number]>;
 
 // "hello"
-type B = FirstIfString<["hello", number, number]>;
+type B = FirstIfString<['hello', number, number]>;
 
 // "hello" | "world"
-type C = FirstIfString<["hello" | "world", boolean]>;
+type C = FirstIfString<['hello' | 'world', boolean]>;
 
 // never
 type D = FirstIfString<[boolean, number, string]>;
@@ -475,11 +480,10 @@ type D = FirstIfString<[boolean, number, string]>;
 我们也可以这样定义 `FirstIfString`：
 
 ```ts
-type FirstIfString<T> =
-    T extends [string, ...unknown[]]
-        // Grab the first type out of `T`
-        ? T[0]
-        : never;
+type FirstIfString<T> = T extends [string, ...unknown[]]
+  ? // Grab the first type out of `T`
+    T[0]
+  : never;
 ```
 
 它可以工作但要更多的“手动”操作且不够形象。
@@ -490,10 +494,9 @@ type FirstIfString<T> =
 为了省去那一层嵌套，TypeScript 4.7 允许在 `infer` 上应用约束。
 
 ```ts
-type FirstIfString<T> =
-    T extends [infer S extends string, ...unknown[]]
-        ? S
-        : never;
+type FirstIfString<T> = T extends [infer S extends string, ...unknown[]]
+  ? S
+  : never;
 ```
 
 通过这种方式，在 TypeScript 去匹配 `S` 时，它也会保证 `S` 是 `string` 类型。
@@ -507,11 +510,11 @@ type FirstIfString<T> =
 
 ```ts
 interface Animal {
-    animalStuff: any;
+  animalStuff: any;
 }
 
 interface Dog extends Animal {
-    dogStuff: any;
+  dogStuff: any;
 }
 
 // ...
@@ -550,8 +553,8 @@ type Setter<in T> = (value: T) => void;
 
 ```ts
 interface State<in out T> {
-    get: () => T;
-    set: (value: T) => void;
+  get: () => T;
+  set: (value: T) => void;
 }
 ```
 
@@ -571,15 +574,15 @@ interface State<in out T> {
 
 ```ts
 interface State<out T> {
-    //          ~~~~~
-    // error!
-    // Type 'State<sub-T>' is not assignable to type 'State<super-T>' as implied by variance annotation.
-    //   Types of property 'set' are incompatible.
-    //     Type '(value: sub-T) => void' is not assignable to type '(value: super-T) => void'.
-    //       Types of parameters 'value' and 'value' are incompatible.
-    //         Type 'super-T' is not assignable to type 'sub-T'.
-    get: () => T;
-    set: (value: T) => void;
+  //          ~~~~~
+  // error!
+  // Type 'State<sub-T>' is not assignable to type 'State<super-T>' as implied by variance annotation.
+  //   Types of property 'set' are incompatible.
+  //     Type '(value: sub-T) => void' is not assignable to type '(value: super-T) => void'.
+  //       Types of parameters 'value' and 'value' are incompatible.
+  //         Type 'super-T' is not assignable to type 'sub-T'.
+  get: () => T;
+  set: (value: T) => void;
 }
 ```
 
@@ -592,21 +595,21 @@ TypeScript 已经在尝试推断类型参数的变型并做为一项优化。
 
 ```ts
 type Foo<T> = {
-    x: T;
-    f: Bar<T>;
-}
+  x: T;
+  f: Bar<T>;
+};
 
 type Bar<U> = (x: Baz<U[]>) => void;
 
 type Baz<V> = {
-    value: Foo<V[]>;
-}
+  value: Foo<V[]>;
+};
 
 declare let foo1: Foo<unknown>;
 declare let foo2: Foo<string>;
 
-foo1 = foo2;  // Should be an error but isn't ❌
-foo2 = foo1;  // Error - correct ✅
+foo1 = foo2; // Should be an error but isn't ❌
+foo2 = foo1; // Error - correct ✅
 ```
 
 提供明确的类型注解能够加快对环状类型的解析速度，有利于提高准确度。
@@ -646,7 +649,7 @@ TypeScript 4.7 支持了 `moduleSuffixes` 选项来自定义模块说明符的�
 对于上述配置，如果有如下的导入语句：
 
 ```ts
-import * as foo from "./foo";
+import * as foo from './foo';
 ```
 
 它会尝试查找文件 `./foo.ios.ts`，`./foo.native.ts` 最后是 `./foo.ts`。
@@ -677,14 +680,10 @@ TypeScript 允许使用 `/// <reference types="..." />` 指令。
 
 ```ts
 // Resolve `pkg` as if we were importing with a `require()`
-import type { TypeFromRequire } from "pkg" assert {
-    "resolution-mode": "require"
-};
+import type { TypeFromRequire } from 'pkg' assert { 'resolution-mode': 'require' };
 
 // Resolve `pkg` as if we were importing with an `import`
-import type { TypeFromImport } from "pkg" assert {
-    "resolution-mode": "import"
-};
+import type { TypeFromImport } from 'pkg' assert { 'resolution-mode': 'import' };
 
 export interface MergedType extends TypeFromRequire, TypeFromImport {}
 ```
@@ -692,11 +691,9 @@ export interface MergedType extends TypeFromRequire, TypeFromImport {}
 这些断言也可以用在 `import()` 类型上。
 
 ```ts
-export type TypeFromRequire =
-    import("pkg", { assert: { "resolution-mode": "require" } }).TypeFromRequire;
+export type TypeFromRequire = import('pkg').TypeFromRequire;
 
-export type TypeFromImport =
-    import("pkg", { assert: { "resolution-mode": "import" } }).TypeFromImport;
+export type TypeFromImport = import('pkg').TypeFromImport;
 
 export interface MergedType extends TypeFromRequire, TypeFromImport {}
 ```
@@ -716,8 +713,8 @@ Try updating with 'npm install -D typescript@next'.
 
 ## 跳转到在源码中的定义
 
-TypeScript 4.7 支持了一个实验性的编辑器功能叫作 *Go To Source Definition* （跳转到在源码中的定义）。
-它和 *Go To Definition* （跳转到定义）相似，但不是跳转到声明文件中。
+TypeScript 4.7 支持了一个实验性的编辑器功能叫作 _Go To Source Definition_ （跳转到在源码中的定义）。
+它和 _Go To Definition_ （跳转到定义）相似，但不是跳转到声明文件中。
 而是查找相应的*实现*文件（比如 `.js` 或 `.ts` 文件），并且在那里查找定义 -
 即便这些文件总是会被声明文件 `.d.ts` 所遮蔽。
 
@@ -740,14 +737,14 @@ TypeScript 为 JavaScript 和 TypeScript 提供了叫做 “Organize Imports” 
 
 ```ts
 // local code
-import * as bbb from "./bbb";
-import * as ccc from "./ccc";
-import * as aaa from "./aaa";
+import * as bbb from './bbb';
+import * as ccc from './ccc';
+import * as aaa from './aaa';
 
 // built-ins
-import * as path from "path";
-import * as child_process from "child_process"
-import * as fs from "fs";
+import * as path from 'path';
+import * as child_process from 'child_process';
+import * as fs from 'fs';
 
 // some code...
 ```
@@ -756,14 +753,13 @@ import * as fs from "fs";
 
 ```ts
 // local code
-import * as child_process from "child_process";
-import * as fs from "fs";
+import * as child_process from 'child_process';
+import * as fs from 'fs';
 // built-ins
-import * as path from "path";
-import * as aaa from "./aaa";
-import * as bbb from "./bbb";
-import * as ccc from "./ccc";
-
+import * as path from 'path';
+import * as aaa from './aaa';
+import * as bbb from './bbb';
+import * as ccc from './ccc';
 
 // some code...
 ```
@@ -777,14 +773,14 @@ TypeScript 4.7 在 “Organize Imports” 时会考虑分组。
 
 ```ts
 // local code
-import * as aaa from "./aaa";
-import * as bbb from "./bbb";
-import * as ccc from "./ccc";
+import * as aaa from './aaa';
+import * as bbb from './bbb';
+import * as ccc from './ccc';
 
 // built-ins
-import * as child_process from "child_process";
-import * as fs from "fs";
-import * as path from "path";
+import * as child_process from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // some code...
 ```
